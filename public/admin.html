@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>BlackAngel - Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00f0ff;
+      --secondary: #7edcff;
+      --accent: #25d366;
+      --danger: #ff4444;
+      --warning: #ffaa44;
+      --card-bg: rgba(10, 20, 40, 0.8);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #050a14;
+      color: #fff;
+      min-height: 100vh;
+    }
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: -1;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--primary);
+      margin-bottom: 30px;
+    }
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+    .logo span { color: #fff; }
+    .logout-btn {
+      background: var(--danger);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 30px;
+      color: white;
+      cursor: pointer;
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,240,255,0.3);
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,240,255,0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    th {
+      color: var(--primary);
+    }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+    }
+    .badge-premium { background: #ffaa44; color: #000; }
+    .badge-banned { background: #ff4444; }
+    .badge-active { background: #25d366; }
+    .btn-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin: 0 5px;
+    }
+    .btn-approve { color: var(--accent); }
+    .btn-decline { color: var(--danger); }
+    .btn-ban { color: var(--danger); }
+    .btn-unban { color: var(--accent); }
+    .btn-premium { color: var(--warning); }
+    .btn-delete { color: #ff8888; }
+    .search-box {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--primary);
+      border-radius: 30px;
+      color: white;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: rgba(0,0,0,0.5);
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr { display: block; }
+      th { display: none; }
+      td { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+      td:before { content: attr(data-label); font-weight: bold; color: var(--primary); }
+    }
+  </style>
+</head>
+<body>
+  <video class="video-bg" autoplay loop muted playsinline>
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-red-flames-rising-in-the-dark-32634-large.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+  <div class="container">
+    <header>
+      <div class="logo"><span>🕶️</span> BLACK ANGEL ADMIN</div>
+      <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </header>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="pending">Pending Approvals</button>
+      <button class="tab-btn" data-tab="users">All Users</button>
+      <button class="tab-btn" data-tab="sessions">Active Sessions</button>
+      <button class="tab-btn" data-tab="stats">Statistics</button>
+    </div>
+    <!-- Pending Tab -->
+    <div id="pendingTab" class="tab-content active">
+      <div class="card">
+        <h3><i class="fas fa-clock"></i> Pending Registrations</h3>
+        <div id="pendingList">Loading...</div>
+      </div>
+    </div>
+    <!-- Users Tab -->
+    <div id="usersTab" class="tab-content">
+      <div class="card">
+        <div class="search-box">
+          <input type="text" id="userSearch" placeholder="Search username, email...">
+        </div>
+        <div id="usersList">Loading...</div>
+      </div>
+    </div>
+    <!-- Sessions Tab -->
+    <div id="sessionsTab" class="tab-content">
+      <div class="card">
+        <h3><i class="fas fa-wifi"></i> Active WhatsApp Sessions</h3>
+        <div id="sessionsList">Loading...</div>
+      </div>
+    </div>
+    <!-- Stats Tab -->
+    <div id="statsTab" class="tab-content">
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+  </div>
+  <script>
+    let currentUsers = [];
+
+    async function apiCall(endpoint, options = {}) {
+      const res = await fetch(endpoint, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options
+      });
+      if (res.status === 401) {
+        window.location.href = '/index.html';
+        return null;
+      }
+      return res.json();
+    }
+
+    async function loadPending() {
+      const pending = await apiCall('/api/admin/pending');
+      const container = document.getElementById('pendingList');
+      if (!pending || pending.length === 0) {
+        container.innerHTML = '<p>No pending registrations.</p>';
+        return;
+      }
+      let html = '<table><thead><tr><th>Username</th><th>Email</th><th>Country</th><th>Phone</th><th>Registered</th><th>Actions</th></tr></thead><tbody>';
+      pending.forEach(u => {
+        html += `<tr>
+          <td data-label="Username">${escapeHtml(u.username)}</td>
+          <td data-label="Email">${escapeHtml(u.email)}</td>
+          <td data-label="Country">${escapeHtml(u.country)}</td>
+          <td data-label="Phone">${escapeHtml(u.number)}</td>
+          <td data-label="Registered">${new Date(u.timestamp).toLocaleString()}</td>
+          <td data-label="Actions">
+            <button class="btn-icon btn-approve" onclick="approveUser('${u.username}')"><i class="fas fa-check-circle"></i></button>
+            <button class="btn-icon btn-decline" onclick="declineUser('${u.username}')"><i class="fas fa-times-circle"></i></button>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    async function approveUser(username) {
+      await apiCall('/api/admin/approve', { method: 'POST', body: JSON.stringify({ username }) });
+      loadPending();
+      loadUsers();
+    }
+    async function declineUser(username) {
+      await apiCall('/api/admin/decline', { method: 'POST', body: JSON.stringify({ username }) });
+      loadPending();
+    }
+
+    async function loadUsers() {
+      const users = await apiCall('/api/admin/users');
+      if (!users) return;
+      currentUsers = users;
+      filterUsers();
+    }
+    function filterUsers() {
+      const search = document.getElementById('userSearch')?.value.toLowerCase() || '';
+      const filtered = currentUsers.filter(u => u.username.toLowerCase().includes(search) || u.email.toLowerCase().includes(search));
+      const container = document.getElementById('usersList');
+      let html = '<table><thead><tr><th>Username</th><th>Email</th><th>Country</th><th>Premium</th><th>Status</th><th>Active Session</th><th>Actions</th></tr></thead><tbody>';
+      filtered.forEach(u => {
+        const premiumBadge = u.premium ? '<span class="badge badge-premium">Premium</span>' : '<span class="badge">Standard</span>';
+        const statusBadge = u.banned ? '<span class="badge badge-banned">Banned</span>' : '<span class="badge badge-active">Active</span>';
+        const activeBadge = u.active ? '<span class="badge badge-active">Online</span>' : '<span class="badge">Offline</span>';
+        html += `<tr>
+          <td data-label="Username">${escapeHtml(u.username)}</td>
+          <td data-label="Email">${escapeHtml(u.email)}</td>
+          <td data-label="Country">${escapeHtml(u.country)}</td>
+          <td data-label="Premium">${premiumBadge}</td>
+          <td data-label="Status">${statusBadge}</td>
+          <td data-label="Active Session">${activeBadge}</td>
+          <td data-label="Actions">
+            ${!u.banned ? `<button class="btn-icon btn-ban" onclick="banUser('${u.username}')"><i class="fas fa-ban"></i></button>` : `<button class="btn-icon btn-unban" onclick="unbanUser('${u.username}')"><i class="fas fa-undo-alt"></i></button>`}
+            <button class="btn-icon btn-premium" onclick="togglePremium('${u.username}', ${!u.premium})"><i class="fas fa-crown"></i></button>
+            <button class="btn-icon btn-delete" onclick="deleteUser('${u.username}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    async function banUser(username) {
+      await apiCall('/api/admin/ban', { method: 'POST', body: JSON.stringify({ username }) });
+      loadUsers();
+    }
+    async function unbanUser(username) {
+      await apiCall('/api/admin/unban', { method: 'POST', body: JSON.stringify({ username }) });
+      loadUsers();
+    }
+    async function togglePremium(username, premium) {
+      await apiCall('/api/admin/premium', { method: 'POST', body: JSON.stringify({ username, premium }) });
+      loadUsers();
+    }
+    async function deleteUser(username) {
+      if (confirm(`Delete user ${username}? This cannot be undone.`)) {
+        await apiCall('/api/admin/delete', { method: 'POST', body: JSON.stringify({ username }) });
+        loadUsers();
+      }
+    }
+
+    async function loadSessions() {
+      const sessions = await apiCall('/api/admin/sessions');
+      const container = document.getElementById('sessionsList');
+      if (!sessions || Object.keys(sessions).length === 0) {
+        container.innerHTML = '<p>No active WhatsApp sessions.</p>';
+        return;
+      }
+      let html = '<table><thead><tr><th>Telegram User ID</th><th>WhatsApp Numbers</th></tr></thead><tbody>';
+      for (const [userId, numbers] of Object.entries(sessions)) {
+        html += `<tr><td data-label="Telegram User ID">${escapeHtml(userId)}</td><td data-label="WhatsApp Numbers">${numbers.map(n => `+${n.phoneNumber}`).join(', ')}</td></tr>`;
+      }
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    async function loadStats() {
+      const users = await apiCall('/api/admin/users');
+      const pending = await apiCall('/api/admin/pending');
+      const sessions = await apiCall('/api/admin/sessions');
+      const total = users.length;
+      const banned = users.filter(u => u.banned).length;
+      const premium = users.filter(u => u.premium).length;
+      const online = users.filter(u => u.active).length;
+      const pendingCount = pending.length;
+      const activeSessions = Object.keys(sessions || {}).length;
+      const statsGrid = document.getElementById('statsGrid');
+      statsGrid.innerHTML = `
+        <div class="stat-card"><div class="stat-number">${total}</div><div>Total Users</div></div>
+        <div class="stat-card"><div class="stat-number">${online}</div><div>Online Users</div></div>
+        <div class="stat-card"><div class="stat-number">${banned}</div><div>Banned Users</div></div>
+        <div class="stat-card"><div class="stat-number">${premium}</div><div>Premium Users</div></div>
+        <div class="stat-card"><div class="stat-number">${pendingCount}</div><div>Pending Approvals</div></div>
+        <div class="stat-card"><div class="stat-number">${activeSessions}</div><div>Active WhatsApp Sessions</div></div>
+      `;
+    }
+
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-tab');
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`${tab}Tab`).classList.add('active');
+        if (tab === 'pending') loadPending();
+        if (tab === 'users') loadUsers();
+        if (tab === 'sessions') loadSessions();
+        if (tab === 'stats') loadStats();
+      });
+    });
+
+    document.getElementById('userSearch')?.addEventListener('input', filterUsers);
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = '/index.html';
+    });
+
+    // Initial load
+    loadPending();
+    loadUsers();
+    loadSessions();
+    loadStats();
+  </script>
+</body>
+</html>
