@@ -1,1 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>BlackAngel - Register</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00f0ff;
+      --secondary: #7edcff;
+      --accent: #25d366;
+      --card-bg: rgba(10, 20, 40, 0.8);
+    }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .glass-box {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 60px 30px 30px;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 50px rgba(0, 240, 255, 0.1);
+      position: relative;
+      text-align: center;
+    }
+
+    .profile-glow {
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-glow .ba-letter {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-shadow: 0 0 20px var(--primary);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      background: rgba(0, 240, 255, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--secondary);
+      border: 1px solid var(--primary);
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .input-group input, .input-group select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 12px;
+      padding-right: 45px;
+      border-radius: 15px;
+      color: #fff;
+      font-size: 0.9rem;
+      text-align: center;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+
+    .input-group .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    .validation-error {
+      color: #ff6b6b;
+      font-size: 0.7rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(45deg, #0077ff, #00f0ff);
+      border: none;
+      padding: 15px;
+      border-radius: 15px;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: 0.3s;
+      margin-top: 10px;
+      position: relative;
+    }
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 240, 255, 0.4);
+    }
+    .btn-submit.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .btn-submit .spinner {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .btn-submit.loading .spinner { display: block; }
+    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+    .password-strength {
+      margin: 5px 0;
+      font-size: 0.7rem;
+      text-align: left;
+    }
+    .strength-bar {
+      height: 3px;
+      background: #333;
+      border-radius: 3px;
+      margin-top: 5px;
+    }
+    .strength-bar div {
+      width: 0%;
+      height: 100%;
+      border-radius: 3px;
+      transition: 0.3s;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--primary);
+      color: #000;
+      padding: 10px 25px;
+      border-radius: 50px;
+      font-weight: 700;
+      transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .notification.error { background: #ff4444; color: white; }
+    .notification.success { background: #25d366; color: white; }
+    .notification.show { transform: translateX(-50%) translateY(0); }
+
+    .row-2col {
+      display: flex;
+      gap: 10px;
+    }
+    .row-2col .input-group { flex: 1; }
+
+    @media (max-width: 500px) { .row-2col { flex-direction: column; gap: 0; } }
+  </style>
+</head>
+<body>
+  <video class="video-bg" autoplay loop muted playsinline>
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-red-flames-rising-in-the-dark-32634-large.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+  
+  <div id="notification" class="notification">📝 Enter the void</div>
+
+  <div class="container">
+    <div class="glass-box">
+      <div class="profile-glow"><div class="ba-letter">BA</div></div>
+      <h1>REGISTER</h1>
+      <span class="badge">BECOME A SHADOW</span>
+
+      <div class="input-group">
+        <input type="email" id="email" placeholder="Email" required>
+        <div class="validation-error" id="emailError">Invalid email</div>
+      </div>
+      <div class="input-group">
+        <input type="text" id="username" placeholder="Username" required>
+        <div class="validation-error" id="usernameError">Username must be at least 3 characters</div>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Password" required>
+        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+        <div class="validation-error" id="passwordError">Password must be at least 6 characters</div>
+        <div class="password-strength">Strength: <span id="strengthText">Weak</span>
+          <div class="strength-bar"><div id="strengthFill"></div></div>
+        </div>
+      </div>
+      <div class="row-2col">
+        <div class="input-group"><input type="number" id="age" placeholder="Age" required></div>
+        <div class="input-group">
+          <select id="gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="row-2col">
+        <div class="input-group"><input type="text" id="country" placeholder="Country" required></div>
+        <div class="input-group"><input type="tel" id="number" placeholder="Phone" required></div>
+      </div>
+
+      <button class="btn-submit" id="submit"><span class="spinner"></span> REGISTER</button>
+
+      <div class="login-link" style="margin-top: 15px;">Already have access? <a href="index.html" style="color:var(--primary);">Login →</a></div>
+
+      <a href="https://whatsapp.com/channel/0029VbCRVuO3LdQW1Tz2UB2A" target="_blank" class="channel-link">
+        <i class="fab fa-whatsapp"></i> JOIN OFFICIAL CHANNEL
+      </a>
+
+      <p style="font-size: 0.6rem; color: rgba(255,255,255,0.3); margin-top: 20px;">
+        © 2026 BLACK ANGEL | POWERED BY ALPHA × DARK
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+    togglePassword.addEventListener('click', () => {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      togglePassword.classList.toggle('fa-eye-slash');
+    });
+
+    // Password strength
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+    passwordField.addEventListener('input', () => {
+      const val = passwordField.value;
+      let strength = 0;
+      if (val.length >= 6) strength++;
+      if (val.length >= 10) strength++;
+      if (/[A-Z]/.test(val)) strength++;
+      if (/[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+      let percent = Math.min((strength / 5) * 100, 100);
+      strengthFill.style.width = percent + '%';
+      if (percent < 30) { strengthFill.style.backgroundColor = '#ff4444'; strengthText.innerText = 'Weak'; }
+      else if (percent < 70) { strengthFill.style.backgroundColor = '#ffaa44'; strengthText.innerText = 'Medium'; }
+      else { strengthFill.style.backgroundColor = '#25d366'; strengthText.innerText = 'Strong'; }
+    });
+
+    const submitBtn = document.getElementById('submit');
+    const notif = document.getElementById('notification');
+
+    function showNotification(message, type = 'info') {
+      notif.innerText = message;
+      notif.className = `notification ${type} show`;
+      setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    function validateForm() {
+      let valid = true;
+      const email = document.getElementById('email').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const password = passwordField.value;
+      const age = document.getElementById('age').value;
+      const country = document.getElementById('country').value.trim();
+      const number = document.getElementById('number').value.trim();
+
+      // Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) { document.getElementById('emailError').style.display = 'block'; valid = false; }
+      else { document.getElementById('emailError').style.display = 'none'; }
+
+      // Username
+      if (username.length < 3) { document.getElementById('usernameError').style.display = 'block'; valid = false; }
+      else { document.getElementById('usernameError').style.display = 'none'; }
+
+      // Password
+      if (password.length < 6) { document.getElementById('passwordError').style.display = 'block'; valid = false; }
+      else { document.getElementById('passwordError').style.display = 'none'; }
+
+      if (!valid) showNotification('❌ Please fix validation errors', 'error');
+      return valid;
+    }
+
+    submitBtn.addEventListener('click', async () => {
+      if (!validateForm()) return;
+
+      const data = {
+        email: document.getElementById('email').value.trim(),
+        username: document.getElementById('username').value.trim(),
+        password: passwordField.value,
+        age: document.getElementById('age').value,
+        gender: document.getElementById('gender').value,
+        country: document.getElementById('country').value.trim(),
+        number: document.getElementById('number').value.trim()
+      };
+
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+          showNotification('✅ Registration submitted. Await admin approval.', 'success');
+          setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+        } else {
+          showNotification('❌ ' + result.message, 'error');
+        }
+      } catch (err) {
+        showNotification('❌ Server error. Try again later.', 'error');
+      } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
