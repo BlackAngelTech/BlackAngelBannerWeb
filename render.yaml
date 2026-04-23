@@ -1,0 +1,20 @@
+# render.yaml - DeathNote Web Interface
+services:
+  - type: web
+    name: deathnote-web
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: PORT
+        value: 3000
+    autoDeploy: true
+    # Optional: if you need persistent storage for user data (like users.json, pending.json)
+    # disk:
+    #   name: deathnote-data
+    #   mountPath: /opt/render/project/src
+    #   sizeGB: 1
