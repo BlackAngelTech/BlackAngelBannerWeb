@@ -1,0 +1,40 @@
+{
+  "users": [
+    {
+      "username": "Alpha",
+      "password": "Alpha2026",
+      "email": "alpha@blackangel.com",
+      "age": 25,
+      "gender": "Male",
+      "country": "Zimbabwe",
+      "number": "263776404156",
+      "approvedAt": 1713993600000,
+      "banned": false,
+      "premium": true
+    },
+    {
+      "username": "Prince",
+      "password": "Prince2026",
+      "email": "prince@blackangel.com",
+      "age": 28,
+      "gender": "Male",
+      "country": "South Africa",
+      "number": "27711234567",
+      "approvedAt": 1713993600000,
+      "banned": false,
+      "premium": true
+    },
+    {
+      "username": "Test",
+      "password": "test",
+      "email": "test@example.com",
+      "age": 22,
+      "gender": "Other",
+      "country": "Global",
+      "number": "1234567890",
+      "approvedAt": 1713993600000,
+      "banned": false,
+      "premium": false
+    }
+  ]
+}
