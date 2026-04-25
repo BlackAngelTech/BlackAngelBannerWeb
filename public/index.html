@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>BlackAngel - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #050a14;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Animated Gradient Background */
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: linear-gradient(125deg, #0a0f1e, #0a1a2a, #0a0a1a);
+      background-size: 300% 300%;
+      animation: gradientShift 15s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: -1;
+    }
+    /* Particle overlay (snow/embers) */
+    .weather-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      top: -20px;
+      animation: fall linear infinite;
+      user-select: none;
+    }
+    .snow {
+      color: rgba(200, 230, 255, 0.8);
+      text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+    }
+    .ember {
+      color: #ff6600;
+      text-shadow: 0 0 5px #ff4400, 0 0 10px #ff0000;
+      filter: blur(0.3px);
+      animation: fall linear infinite, flickerEmber 0.5s infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(100vh) translateX(100px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes flickerEmber {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    /* Main container */
+    .container {
+      max-width: 460px;
+      width: 90%;
+      padding: 20px;
+      z-index: 10;
+    }
+    .glass-card {
+      background: linear-gradient(135deg, rgba(10, 10, 30, 0.6), rgba(0, 20, 40, 0.4));
+      backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 32px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 40px rgba(0, 240, 255, 0.15);
+      transition: transform 0.2s;
+    }
+    .glass-card:hover {
+      transform: translateY(-4px);
+    }
+    /* Animated border glow */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 32px;
+      padding: 1px;
+      background: linear-gradient(135deg, #00f0ff, transparent, #ff00ff);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: rotate 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+    .profile-glow {
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, #00f0ff, #25d366);
+      border-radius: 50%;
+      margin: -70px auto 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+    }
+    .ba-letter {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #000;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: #00f0ff;
+      text-align: center;
+      margin-bottom: 8px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+    .badge {
+      display: block;
+      text-align: center;
+      font-size: 0.7rem;
+      background: rgba(0, 240, 255, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #7edcff;
+      width: fit-content;
+      margin: 0 auto 20px auto;
+      border: 1px solid #00f0ff;
+    }
+    .stats-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      background: rgba(0,0,0,0.4);
+      border-radius: 20px;
+      padding: 10px;
+      text-align: center;
+      flex: 1;
+      border: 1px solid rgba(0,240,255,0.2);
+    }
+    .stat-number {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #00f0ff;
+      font-family: 'Orbitron', monospace;
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    .input-group input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 14px 20px;
+      border-radius: 40px;
+      color: #fff;
+      font-size: 1rem;
+      text-align: center;
+      outline: none;
+      transition: 0.2s;
+    }
+    .input-group input:focus {
+      border-color: #00f0ff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(45deg, #0077ff, #00f0ff);
+      border: none;
+      padding: 14px;
+      border-radius: 40px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-bottom: 15px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 240, 255, 0.4);
+    }
+    .register-link {
+      text-align: center;
+      font-size: 0.8rem;
+    }
+    .register-link a {
+      color: #00f0ff;
+      text-decoration: none;
+    }
+    .error {
+      color: #ff6b6b;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.4);
+    }
+    @media (max-width: 480px) {
+      .glass-card { padding: 30px 20px; }
+      .stats-grid { gap: 8px; }
+      .stat-number { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="gradient-bg"></div>
+  <div class="overlay"></div>
+  <div class="weather-overlay" id="weather"></div>
+
+  <div class="container">
+    <div class="glass-card">
+      <div class="profile-glow"><div class="ba-letter">BA</div></div>
+      <h1>BLACK ANGEL</h1>
+      <span class="badge">ACCESS THE VOID</span>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">● ONLINE</div><div class="stat-label">STATUS</div></div>
+        <div class="stat-card"><div class="stat-number" id="ping">--</div><div class="stat-label">LATENCY</div></div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="username" placeholder="Username" autocomplete="off">
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Password">
+      </div>
+
+      <button class="btn-submit" id="submit">ENTER</button>
+
+      <div class="register-link">No account? <a href="register.html">Create one →</a></div>
+      <div id="errorMsg" class="error"></div>
+      <div class="footer">© 2026 BLACK ANGEL | POWERED BY ALPHA × DARK</div>
+    </div>
+  </div>
+
+  <script>
+    // Simulated ping (random between 10 and 60 ms)
+    setInterval(() => {
+      const pingEl = document.getElementById('ping');
+      if (pingEl) pingEl.innerText = Math.floor(Math.random() * 50) + 10 + 'ms';
+    }, 3000);
+
+    const submitBtn = document.getElementById('submit');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const errorDiv = document.getElementById('errorMsg');
+
+    submitBtn.addEventListener('click', async () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        errorDiv.innerText = '❌ Please fill all fields';
+        return;
+      }
+
+      errorDiv.innerText = '';
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'LOGGING...';
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = data.redirect;
+        } else {
+          errorDiv.innerText = '❌ ' + data.message;
+        }
+      } catch (err) {
+        errorDiv.innerText = '❌ Server error';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'ENTER';
+      }
+    });
+
+    // Particle effect (snow + embers)
+    function createParticle() {
+      const weatherDiv = document.getElementById('weather');
+      if (!weatherDiv) return;
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      const isEmber = Math.random() > 0.7;
+      if (isEmber) {
+        particle.classList.add('ember');
+        particle.innerHTML = '🔥';
+      } else {
+        particle.classList.add('snow');
+        particle.innerHTML = ['❄', '❅', '❆'][Math.floor(Math.random() * 3)];
+      }
+      particle.style.left = Math.random() * 100 + '%';
+      const size = Math.random() * 0.8 + 0.5;
+      particle.style.fontSize = size + 'rem';
+      const duration = Math.random() * 10 + 5;
+      particle.style.animationDuration = duration + 's';
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      weatherDiv.appendChild(particle);
+      setTimeout(() => particle.remove(), duration * 1000);
+    }
+    setInterval(createParticle, 200);
+    for(let i = 0; i < 30; i++) setTimeout(createParticle, i * 60);
+  </script>
+</body>
+</html>
