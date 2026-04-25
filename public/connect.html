@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>BlackAngel - Connect WhatsApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #050a14;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: -1;
+    }
+    .container {
+      max-width: 500px;
+      margin: 20px;
+      padding: 30px;
+      background: rgba(10, 20, 40, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      border: 1px solid rgba(0,240,255,0.2);
+      text-align: center;
+    }
+    .ba-letter {
+      width: 90px;
+      height: 90px;
+      background: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #00f0ff;
+      margin: 0 auto 15px;
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      color: #00f0ff;
+      font-size: 1.8rem;
+    }
+    .method-buttons {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .method-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,240,255,0.3);
+      padding: 10px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .method-btn.active {
+      background: #00f0ff;
+      color: #000;
+    }
+    .qr-container {
+      background: #fff;
+      border-radius: 20px;
+      padding: 10px;
+      display: inline-block;
+      margin: 10px 0;
+    }
+    .qr-image {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,240,255,0.3);
+      padding: 12px;
+      border-radius: 30px;
+      color: #fff;
+      margin: 10px 0;
+      text-align: center;
+    }
+    button {
+      background: linear-gradient(45deg, #0077ff, #00f0ff);
+      border: none;
+      padding: 12px;
+      border-radius: 40px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    .code-display {
+      font-family: monospace;
+      font-size: 1.8rem;
+      color: #25d366;
+      background: rgba(37,211,102,0.1);
+      padding: 15px;
+      border-radius: 20px;
+      border: 1px dashed #25d366;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #ffaa44;
+    }
+    .loader {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <video class="video-bg" autoplay loop muted playsinline>
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-red-flames-rising-in-the-dark-32634-large.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <div class="container">
+    <div class="ba-letter">BA</div>
+    <h1>BLACK ANGEL PAIR</h1>
+    <div class="method-buttons">
+      <button class="method-btn active" id="qrMethodBtn">📷 QR</button>
+      <button class="method-btn" id="numberMethodBtn">📱 PHONE</button>
+    </div>
+
+    <!-- QR Method -->
+    <div id="qrMethod">
+      <div class="qr-container">
+        <img id="qrImage" class="qr-image" alt="QR Code" style="display: none;">
+      </div>
+      <button id="refreshQrBtn">⟳ REFRESH QR</button>
+      <div id="qrStatus" class="status">Waiting for QR...</div>
+    </div>
+
+    <!-- Phone Number Method -->
+    <div id="numberMethod" style="display: none;">
+      <input type="tel" id="phoneNumber" placeholder="Your number (e.g., 263712345678)">
+      <button id="requestCodeBtn">REQUEST CODE</button>
+      <div id="pairingCodeDisplay" class="code-display" style="display: none;"></div>
+      <div id="numberStatus" class="status"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentMethod = 'qr';
+    function setMethod(method) {
+      currentMethod = method;
+      document.getElementById('qrMethod').style.display = method === 'qr' ? 'block' : 'none';
+      document.getElementById('numberMethod').style.display = method === 'number' ? 'block' : 'none';
+      document.getElementById('qrMethodBtn').classList.toggle('active', method === 'qr');
+      document.getElementById('numberMethodBtn').classList.toggle('active', method === 'number');
+      if (method === 'qr') fetchQR();
+    }
+
+    async function fetchQR() {
+      const statusDiv = document.getElementById('qrStatus');
+      const img = document.getElementById('qrImage');
+      statusDiv.innerHTML = '<span class="loader"></span> Generating QR...';
+      img.style.display = 'none';
+      try {
+        const res = await fetch('/api/request-qr', { method: 'POST' });
+        const data = await res.json();
+        if (data.qr) {
+          img.src = data.qr;
+          img.style.display = 'block';
+          statusDiv.innerHTML = '✅ QR ready. Scan with WhatsApp.';
+        } else {
+          statusDiv.innerHTML = '⚠️ No QR received. Try again.';
+        }
+      } catch (err) {
+        statusDiv.innerHTML = '❌ Backend error. Ensure server is running.';
+      }
+    }
+
+    async function requestPairingCode() {
+      const phone = document.getElementById('phoneNumber').value.trim();
+      if (!phone) {
+        document.getElementById('numberStatus').innerHTML = '❌ Enter your number.';
+        return;
+      }
+      const btn = document.getElementById('requestCodeBtn');
+      const statusDiv = document.getElementById('numberStatus');
+      btn.disabled = true;
+      statusDiv.innerHTML = '<span class="loader"></span> Requesting code...';
+      try {
+        const res = await fetch('/api/request-pairing-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber: phone })
+        });
+        const data = await res.json();
+        if (data.success && data.code) {
+          const codeDiv = document.getElementById('pairingCodeDisplay');
+          codeDiv.innerText = data.code;
+          codeDiv.style.display = 'block';
+          statusDiv.innerHTML = '✅ Code received. Use it in WhatsApp.';
+        } else {
+          statusDiv.innerHTML = '❌ ' + (data.error || 'Failed to get code');
+        }
+      } catch (err) {
+        statusDiv.innerHTML = '❌ Network error.';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Copy code to clipboard
+    document.getElementById('pairingCodeDisplay')?.addEventListener('click', function() {
+      navigator.clipboard.writeText(this.innerText);
+      const status = document.getElementById('numberStatus');
+      const original = status.innerHTML;
+      status.innerHTML = '📋 Copied!';
+      setTimeout(() => { status.innerHTML = original; }, 2000);
+    });
+
+    document.getElementById('qrMethodBtn').onclick = () => setMethod('qr');
+    document.getElementById('numberMethodBtn').onclick = () => setMethod('number');
+    document.getElementById('refreshQrBtn').onclick = fetchQR;
+    document.getElementById('requestCodeBtn').onclick = requestPairingCode;
+
+    setMethod('qr');
+  </script>
+</body>
+</html>
